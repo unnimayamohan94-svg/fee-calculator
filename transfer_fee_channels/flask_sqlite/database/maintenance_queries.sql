@@ -1,0 +1,22 @@
+-- KJ product / transaction mapping
+SELECT * FROM prod_detl WHERE CHANNEL='KJ' ORDER BY TRAN_ID;
+
+-- KJ currency fee resolution
+SELECT pd.TRAN_ID,pd.FEE_GROUP_ID,f.FEE_ID,f.FEE_NAME,f.CRCY_TYPE_CODE
+FROM prod_detl pd
+JOIN group_fees_detl g ON g.CHANNEL=pd.CHANNEL AND g.FEES_GROUP_ID=pd.FEE_GROUP_ID
+JOIN fee f ON f.CHANNEL=g.CHANNEL AND f.FEE_ID=g.FEES_ID
+WHERE pd.CHANNEL='KJ'
+ORDER BY pd.TRAN_ID,f.CRCY_TYPE_CODE;
+
+-- KJ SAR/USD calculation rows: No Liquidity only
+SELECT * FROM fee_detl
+WHERE CHANNEL='KJ' AND LQDTY='00004'
+ORDER BY FEE_ID,RNGE_STRT;
+
+-- KJ extra commission ID 1 with zone names
+SELECT e.EXTRA_CMSN_ID,z.ZONE_CODE,z.ZONE_NAME,e.CURRENCY,e.EXTRA_CMSN_PRCNTG
+FROM extra_commission e
+JOIN zone z ON z.CHANNEL=e.CHANNEL AND z.ZONE_ID=e.ZONE_ID
+WHERE e.CHANNEL='KJ' AND e.EXTRA_CMSN_ID=1
+ORDER BY e.CURRENCY,e.ZONE_ID;

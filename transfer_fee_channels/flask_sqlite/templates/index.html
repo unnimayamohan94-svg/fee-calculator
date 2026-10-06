@@ -1,0 +1,108 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Transfer Fee Calculator</title><link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"></head><body>
+<div class="wrap">
+  <div class="head">
+    <div><h1>Transfer Fee Calculator</h1><p>Channel-aware fee and extra commission prototype</p></div>
+    <div id="channelBadge" class="badge">MFloos Channel</div>
+  </div>
+
+  <div class="channelBar">
+    <div><div class="channelTitle">Channel</div><div id="channelHint" class="channelHint">MFloos fee configuration</div></div>
+    <div class="channelChoice">
+      <button id="mfBtn" class="channelBtn active" data-channel="MFLOOS">MFloos</button>
+      <button id="kjBtn" class="channelBtn" data-channel="KJ">KJ</button>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" data-tab="calculator">Calculator</button>
+    <button class="tab" data-tab="mappings">Mappings</button>
+  </div>
+
+  <section id="calculator" class="pane active">
+    <div class="grid">
+      <div class="card">
+        <h2>Transaction input</h2>
+        <div class="field"><label>Product</label><select id="product"></select></div>
+        <div class="field"><label>Transaction</label><select id="transaction"></select></div>
+        <div class="field"><label>Currency</label><select id="currency"><option>YER</option><option>SAR</option><option>USD</option></select></div>
+        <div id="modeNote" class="modeNote"></div>
+
+        <div id="liquidityFields" class="two">
+          <div class="field"><label>From Liquidity</label><select id="fromLiq"><option>High</option><option>Medium</option><option>Low</option></select></div>
+          <div class="field"><label>To Liquidity</label><select id="toLiq"><option>High</option><option>Medium</option><option>Low</option></select></div>
+        </div>
+
+        <div id="zoneFields" class="two hidden">
+          <div class="field"><label>Sender Zone</label><select id="senderZone"></select></div>
+          <div class="field"><label>Receiver Zone</label><select id="receiverZone"></select></div>
+        </div>
+
+        <div class="field"><label>Amount</label><input id="amount" type="number" min="0.01" step="0.01" value="1000"></div>
+        <button id="calculateBtn" class="primary">Calculate Fee</button>
+        <div id="error" class="error"></div>
+      </div>
+
+      <div id="result" class="card hidden">
+        <div id="yerMetrics" class="metrics">
+          <div class="metric"><div class="kicker">High Fee</div><div id="highValue" class="value"></div><div id="highSub" class="sub"></div></div>
+          <div class="metric"><div class="kicker">Calculated Liquidity Fee</div><div id="calcValue" class="value"></div><div id="calcSub" class="sub"></div></div>
+          <div class="metric final"><div class="kicker">Final Liquidity Fee</div><div id="finalValue" class="value"></div><div id="finalSub" class="sub"></div></div>
+        </div>
+
+        <div id="fxMetrics" class="metrics hidden">
+          <div class="metric"><div id="foreignFeeLabel" class="kicker">Transaction Fee</div><div id="fxFeeValue" class="value"></div><div id="fxFeeSub" class="sub"></div></div>
+          <div class="metric"><div class="kicker">Extra Commission</div><div id="extraValue" class="value"></div><div id="extraSub" class="sub"></div></div>
+          <div class="metric final"><div class="kicker">Total Transaction Fee</div><div id="totalValue" class="value"></div><div id="totalSub" class="sub"></div></div>
+        </div>
+
+        <div id="trace" class="trace"></div>
+
+        <div id="yerDetails" class="details">
+          <div class="mini"><h3>High fee rule</h3>
+            <div class="row"><span>Percentage</span><strong id="highPct"></strong></div>
+            <div class="row"><span>Range</span><strong id="highRange"></strong></div>
+            <div class="row"><span>Min / Max</span><strong id="highMinMax"></strong></div>
+            <div class="row"><span>Cap</span><strong id="highCap"></strong></div>
+          </div>
+          <div class="mini"><h3>Calculated liquidity rule</h3>
+            <div class="row"><span>Percentage</span><strong id="calcPct"></strong></div>
+            <div class="row"><span>Range</span><strong id="calcRange"></strong></div>
+            <div class="row"><span>Min / Max</span><strong id="calcMinMax"></strong></div>
+            <div class="row"><span>Cap</span><strong id="calcCap"></strong></div>
+          </div>
+        </div>
+
+        <div id="fxDetails" class="details hidden">
+          <div class="mini"><h3 id="foreignRuleTitle">Transaction fee rule</h3>
+            <div class="row"><span>Liquidity code</span><strong id="foreignLiqCode"></strong></div>
+            <div class="row"><span>Percentage</span><strong id="fxPct"></strong></div>
+            <div class="row"><span>Range</span><strong id="fxRange"></strong></div>
+            <div class="row"><span>Min / Max</span><strong id="fxMinMax"></strong></div>
+            <div class="row"><span>Cap</span><strong id="fxCap"></strong></div>
+          </div>
+          <div class="mini"><h3>Extra Commission</h3>
+            <div class="row"><span>Sender Zone %</span><strong id="senderPctOut"></strong></div>
+            <div class="row"><span>Receiver Zone %</span><strong id="receiverPctOut"></strong></div>
+            <div class="row"><span>Raw Extra Commission</span><strong id="rawExtra"></strong></div>
+            <div class="row"><span>Applied Extra Commission</span><strong id="extraApplied"></strong></div>
+          </div>
+        </div>
+
+        <div id="formula" class="formula"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="mappings" class="pane">
+    <div class="card">
+      <h2 id="mappingTitle">MFloos mappings</h2>
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>Product</th><th>Transaction</th><th>Fee Group</th><th>USD Fee</th><th>YER Fee</th><th>SAR Fee</th><th>Extra Comm ID</th></tr></thead>
+          <tbody id="mappingBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+</div>
+<script src="{{ url_for('static', filename='app.js') }}"></script></body></html>
